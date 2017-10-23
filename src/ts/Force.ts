@@ -1,7 +1,6 @@
-export class Force {
-    public amount: number = 0;
-    public direction: number;
+import {VectorValue} from "./VectorValue";
 
+export class Force extends VectorValue {
     static net (first: Force, second: Force): Force {
         let net = new Force;
         let relativeAngle = first.direction - second.direction;
