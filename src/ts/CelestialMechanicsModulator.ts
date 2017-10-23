@@ -12,25 +12,25 @@ export class CelestialMechanicsModulator {
         this.bodies.push(new Body(7.5e8, 4.5e8, EARTH_MASS));
     }
 
-    integrate(ms: number) {
+    integrate(time: number) {
         this.bodies.forEach(body => {
             let gravityForce = this.getNetGravityForce(body);
-            body.force(gravityForce);
+            body.exert(gravityForce, time);
         });
-        this.move(ms);
+        this.move(time);
     }
 
     private getNetGravityForce(body: Body): Force {
         let netForce = new Force();
         this.bodies.forEach(another => {
             if (another !== body) {
-                Force.net(netForce, Body.getGravityForce(body, another))
+                Force.net(netForce, Body.gravityForceBetween(body, another))
             }
         });
         return netForce;
     }
 
-    private move(ms: number) {
+    private move(time: number) {
 
     }
 }

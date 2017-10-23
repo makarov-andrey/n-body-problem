@@ -1,14 +1,18 @@
-export class Coordinates {
+export class Position {
     constructor (
-        public x: number,
-        public y: number
+        public x: number = 0,
+        public y: number= 0
     ) {}
 
-    static distance (from: Coordinates, to: Coordinates) {
+    static distance (from: Position, to: Position = new Position(0, 0)) {
         return Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2));
     }
 
-    static direction (from: Coordinates, to: Coordinates) {
+    static direction (from: Position, to: Position = null) {
+        if (to === null) {
+            to = from;
+            from = new Position(0, 0);
+        }
         let ordinateCatheter = to.y - from.y;
         let abscissaCatheter = to.x - from.x;
         if (ordinateCatheter == 0) {
@@ -18,7 +22,7 @@ export class Coordinates {
             return ordinateCatheter >= 0 ? Math.PI / 2 : Math.PI * 1.5;
         }
         let relativeAngle = Math.abs(Math.atan(ordinateCatheter / abscissaCatheter));
-        switch (Coordinates.quarter(to, from)) {
+        switch (Position.quarter(to, from)) {
             case 1:
                 return relativeAngle;
             case 2:
@@ -30,7 +34,7 @@ export class Coordinates {
         }
     }
 
-    static quarter (point: Coordinates, startingPosition: Coordinates = new Coordinates(0, 0)): 1|2|3|4 {
+    static quarter (point: Position, startingPosition: Position = new Position(0, 0)): 1|2|3|4 {
         if (point.x > startingPosition.x) {
             if (point.y > startingPosition.y) {
                 return 1;
