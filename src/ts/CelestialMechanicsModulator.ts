@@ -1,7 +1,7 @@
-import {Body} from "./Body";
-import {Force} from "./Force";
+import {Body} from "./models/Body";
+import {Force} from "./models/Force";
 
-const EARTH_MASS = 5.9726e24;
+const EARTH_MASS = 6e34;
 
 export class CelestialMechanicsModulator {
     public bodies: Body[] = [];
@@ -13,24 +13,23 @@ export class CelestialMechanicsModulator {
     }
 
     integrate(time: number) {
+        let gravityForcesForBodies: Map<Body, Force> = new Map();
         this.bodies.forEach(body => {
-            let gravityForce = this.getNetGravityForce(body);
-            body.exert(gravityForce, time);
+            gravityForcesForBodies.set(body, this.netGravityForceFor(body));
         });
-        this.move(time);
+        this.bodies.forEach(body => {
+            body.exert(gravityForcesForBodies.get(body), time);
+            body.move(time);
+        });
     }
 
-    private getNetGravityForce(body: Body): Force {
+    netGravityForceFor(body: Body) {
         let netForce = new Force();
         this.bodies.forEach(another => {
             if (another !== body) {
-                Force.net(netForce, Body.gravityForceBetween(body, another))
+                netForce.add(body.gravityForce(another))
             }
         });
         return netForce;
-    }
-
-    private move(time: number) {
-
     }
 }
