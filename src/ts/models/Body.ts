@@ -8,10 +8,9 @@ export class Body {
     public velocity: Velocity;
     public position: Position;
 
-    constructor (x: number = 0, y: number = 0, mass: number = 0) {
-        this.position = new Position(x, y);
+    constructor () {
+        this.position = new Position();
         this.velocity = new Velocity();
-        this.mass = mass;
     }
 
     exert (force: Force, time: number) {
