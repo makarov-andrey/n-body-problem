@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/ts/app.ts',
+    entry: './src/bootstrap.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
@@ -12,7 +12,8 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.tsx?$/, loader: 'ts-loader' }
+            { test: /\.tsx?$/, loader: 'ts-loader' },
+            { test: /\.css$/, loader: "style-loader!css-loader" }
         ]
     },
     devtool: 'source-map'
