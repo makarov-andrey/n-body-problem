@@ -1,4 +1,4 @@
-import {CelestialMechanicsModulator} from "./CelestialMechanicsModulator";
+import {CelestialMechanicsModulator} from "./CelestialMechanicsSimulator";
 import {CelestialMechanicsRenderer} from "./CelestialMechanicsRenderer";
 
 let canvas = <HTMLElement> document.getElementById("space");

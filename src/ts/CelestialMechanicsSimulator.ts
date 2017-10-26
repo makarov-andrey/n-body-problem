@@ -59,6 +59,12 @@ export class CelestialMechanicsModulator {
         this.bodies[2].velocity.setDirection(rand(Math.PI  / 2, Math.PI));
     }
 
+    /**
+     * Метод интегрирует систему по времени. Т.е. вычисляет действие силы на каждый объект системы за заданный прошедший
+     * промежуток времени и двигает тела системы в соответствии с их импульсами.
+     *
+     * @param {number} time
+     */
     integrate(time: number) {
         let gravityForcesForBodies: Map<Body, Force> = new Map();
         this.bodies.forEach(body => {
@@ -70,6 +76,12 @@ export class CelestialMechanicsModulator {
         });
     }
 
+    /**
+     * Метод вычисляет равнодействующую сил притяжения всех объектов системы на тело
+     *
+     * @param {Body} body
+     * @returns {Force}
+     */
     netGravityForceFor(body: Body) {
         let netForce = new Force();
         this.bodies.forEach(another => {

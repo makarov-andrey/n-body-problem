@@ -1,4 +1,4 @@
-import {CelestialMechanicsModulator} from "./CelestialMechanicsModulator";
+import {CelestialMechanicsModulator} from "./CelestialMechanicsSimulator";
 import {Body} from "./models/Body";
 import {Position} from "./models/Position";
 

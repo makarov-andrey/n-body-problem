@@ -4,10 +4,42 @@ export class RadiusVector {
         public y: number= 0
     ) {}
 
+    /**
+     * Возвращает расстояние от текущей точки до точки to (по умолчанию - до начала координат)
+     *
+     * @param {RadiusVector} to
+     * @returns {number}
+     */
     getDistance (to: RadiusVector = new RadiusVector(0, 0)) {
         return Math.sqrt(Math.pow(to.x - this.x, 2) + Math.pow(to.y - this.y, 2));
     }
 
+    /**
+     * Удлиняет вектор в том же направлении (устанавливая новые координаты)
+     *
+     * @param {number} val
+     */
+    setDistance (val: number) {
+        let direction = this.getDirection();
+        this.x = val * Math.sin(direction);
+        this.y = val * Math.cos(direction);
+    }
+
+    /**
+     * Возвращает угол вектора в радианах относительно оси абсцисс в соответствии с математическими стандартами
+     *          ∧ PI * 0.5
+     *          |
+     *          |
+     *          |      0 (PI * 2)
+     * <----------------->
+     * PI       |
+     *          |
+     *          |
+     *          ∨ PI * 1.5
+     *
+     * @param {RadiusVector} to
+     * @returns {number}
+     */
     getDirection (to: RadiusVector = null) {
         let from;
         if (to === null) {
@@ -37,6 +69,21 @@ export class RadiusVector {
         }
     }
 
+    /**
+     * Возвращает четверть, в которой лежит радиус-вектор, в соответствии с математическими стандартами
+     *          ∧
+     *          |
+     *    2     |    1
+     *          |
+     * <----------------->
+     *          |
+     *    3     |    4
+     *          |
+     *          ∨
+     *
+     * @param {RadiusVector} startingPosition
+     * @returns {number} 1|2|3|4
+     */
     getQuarter (startingPosition: RadiusVector = new RadiusVector(0, 0)): 1|2|3|4 {
         if (this.x > startingPosition.x) {
             if (this.y > startingPosition.y) {
@@ -53,27 +100,48 @@ export class RadiusVector {
         }
     }
 
+    /**
+     * @see this.getDistance
+     * @returns {number}
+     */
     getAmount () {
         return this.getDistance();
     }
 
+    /**
+     * @see this.setDistance
+     * @param {number} val
+     */
     setAmount (val: number) {
-        let direction = this.getDirection();
-        this.x = val * Math.sin(direction);
-        this.y = val * Math.cos(direction);
+        this.setDistance(val);
     }
 
+    /**
+     * Устанавливает координаты вектора, не меняя значения
+     *
+     * @param {number} val - угол относительно оси абсцисс в радианах
+     */
     setDirection (val: number) {
         let amount = this.getAmount();
         this.x = amount * Math.sin(val);
         this.y = amount * Math.cos(val);
     }
 
+    /**
+     * Прибавляет вектор к текущему вектору
+     *
+     * @param {RadiusVector} another
+     */
     add (another: RadiusVector) {
         this.x += another.x;
         this.y += another.y;
     }
 
+    /**
+     * Вычитает вектор из текущего вектора
+     *
+     * @param {RadiusVector} another
+     */
     deduct (another: RadiusVector) {
         this.x -= another.x;
         this.y -= another.y;
