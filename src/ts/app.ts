@@ -1,19 +1,9 @@
-import {CelestialMechanicsModulator} from "./CelestialMechanicsSimulator";
+import {CelestialMechanicsSimulator} from "./CelestialMechanicsSimulator";
 import {CelestialMechanicsRenderer} from "./CelestialMechanicsRenderer";
+import {CelestialMechanicsController} from "./CelestialMechanicsController";
 
 let canvas = <HTMLElement> document.getElementById("space");
-
-let modulator = new CelestialMechanicsModulator();
-let renderer = new CelestialMechanicsRenderer(canvas, modulator);
-
-let integrationStep = 30 / 1000;
-setInterval(() => {
-    modulator.integrate(integrationStep);
-}, integrationStep * 1000);
-
-
-function tick () {
-    renderer.render();
-    requestAnimationFrame(tick);
-}
-tick();
+let simulator = new CelestialMechanicsSimulator();
+let renderer = new CelestialMechanicsRenderer(canvas, simulator);
+let controller = new CelestialMechanicsController(simulator, renderer);
+controller.start();

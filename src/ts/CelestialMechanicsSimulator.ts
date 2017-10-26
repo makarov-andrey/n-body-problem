@@ -1,7 +1,7 @@
 import {Body} from "./models/Body";
 import {Force} from "./models/Force";
 
-export class CelestialMechanicsModulator {
+export class CelestialMechanicsSimulator {
     public bodies: Body[] = [];
 
     constructor() {
@@ -12,7 +12,7 @@ export class CelestialMechanicsModulator {
     }
 
     butterfly() {
-        this.bodies.forEach(body => body.mass = 2.05e35);
+        this.bodies.forEach(body => body.mass = 2.74002e35);
         let scale = 3e8;
         let offsetX = scale * 2;
         let offsetY = scale * 2;

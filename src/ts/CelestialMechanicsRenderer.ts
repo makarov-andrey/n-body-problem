@@ -1,4 +1,4 @@
-import {CelestialMechanicsModulator} from "./CelestialMechanicsSimulator";
+import {CelestialMechanicsSimulator} from "./CelestialMechanicsSimulator";
 import {Body} from "./models/Body";
 import {Position} from "./models/Position";
 
@@ -11,7 +11,7 @@ export class CelestialMechanicsRenderer {
 
     constructor (
         public space: HTMLElement,
-        public modulator: CelestialMechanicsModulator
+        public modulator: CelestialMechanicsSimulator
     ) {
         this.createLayers();
         this.fillColors();
