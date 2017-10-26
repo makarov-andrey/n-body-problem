@@ -24,6 +24,11 @@ export class Body {
     public position: Position = new Position();
 
     /**
+     * Цвет для отрисовки
+     */
+    public color: string;
+
+    /**
      * Применить силу в течении времени
      *
      * @param {Force} force

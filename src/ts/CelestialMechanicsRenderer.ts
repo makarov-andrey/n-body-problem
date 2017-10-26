@@ -4,7 +4,6 @@ import {Position} from "./models/Position";
 
 export class CelestialMechanicsRenderer {
     public scale: number = 3e6;
-    public bodiesColors: Map<Body, string> = new Map;
     public prevPositions: Map<Body, Position> = new Map;
     protected trajectoriesLayer: CanvasRenderingContext2D;
     protected bodiesLayer: CanvasRenderingContext2D;
@@ -14,7 +13,6 @@ export class CelestialMechanicsRenderer {
         public modulator: CelestialMechanicsSimulator
     ) {
         this.createLayers();
-        this.fillColors();
         this.fillPrevPositions();
     }
 
@@ -30,22 +28,6 @@ export class CelestialMechanicsRenderer {
         bodiesCanvas.height = this.space.offsetHeight;
         this.space.appendChild(bodiesCanvas);
         this.bodiesLayer = bodiesCanvas.getContext("2d");
-    }
-
-    private fillColors () {
-        let niceColors = [
-            "#900",
-            "#090",
-            "#009",
-            "#990",
-            "#909",
-            "#099",
-            "#999",
-        ];
-
-        this.modulator.bodies.forEach(body => {
-            this.bodiesColors.set(body, niceColors.shift());
-        })
     }
 
     private fillPrevPositions () {
@@ -65,7 +47,7 @@ export class CelestialMechanicsRenderer {
             let x = body.position.x / this.scale;
             let y = body.position.y / this.scale;
 
-            this.bodiesLayer.fillStyle = this.bodiesColors.get(body);
+            this.bodiesLayer.fillStyle = body.color;
             this.bodiesLayer.beginPath();
             this.bodiesLayer.arc(x, y, 3, 0, 2 * Math.PI);
             this.bodiesLayer.fill();
@@ -80,7 +62,7 @@ export class CelestialMechanicsRenderer {
             let newX = body.position.x / this.scale;
             let newY = body.position.y / this.scale;
 
-            this.trajectoriesLayer.strokeStyle = this.bodiesColors.get(body);
+            this.trajectoriesLayer.strokeStyle = body.color;
             this.trajectoriesLayer.beginPath();
             this.trajectoriesLayer.moveTo(oldX, oldY);
             this.trajectoriesLayer.lineTo(newX, newY);

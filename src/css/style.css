@@ -6,3 +6,19 @@
     top: 0;
     left: 0;
 }
+
+.container {
+    max-width: 1020px;
+    display: flex;
+    justify-content: space-between;
+}
+.col {
+    width: 500px;
+}
+
+#controls label {
+    display: block;
+}
+#controls .body-controls-box {
+    margin-bottom: 20px;
+}

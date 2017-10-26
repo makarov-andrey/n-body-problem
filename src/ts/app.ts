@@ -1,9 +1,6 @@
-import {CelestialMechanicsSimulator} from "./CelestialMechanicsSimulator";
-import {CelestialMechanicsRenderer} from "./CelestialMechanicsRenderer";
 import {CelestialMechanicsController} from "./CelestialMechanicsController";
 
-let canvas = <HTMLElement> document.getElementById("space");
-let simulator = new CelestialMechanicsSimulator();
-let renderer = new CelestialMechanicsRenderer(canvas, simulator);
-let controller = new CelestialMechanicsController(simulator, renderer);
+let space = <HTMLElement> document.getElementById("space");
+let controls = <HTMLElement> document.getElementById("controls");
+let controller = new CelestialMechanicsController(space, controls);
 controller.start();
