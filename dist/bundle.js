@@ -370,43 +370,8 @@ class CelestialMechanicsController {
         this.render();
     }
     reset() {
-        this.setInitialValuesForBodies();
-        this.render();
-    }
-    createBodies() {
-        for (let i = 0; i < 3; i++) {
-            this.simulator.bodies[i] = new Body_1.Body();
-            this.simulator.bodies[i].color = this.niceColors.shift() || "#000";
-        }
-        this.setInitialValuesForBodies();
-    }
-    createControls() {
-        this.simulator.bodies.forEach((body, i) => {
-            let bodyControlsAccessor = new BodyControlsAccessor_1.BodyControlsAccessor(body, `Тело  ${i + 1}`);
-            this.bodyControlsAccessors.push(bodyControlsAccessor);
-            this.controlsElement.appendChild(bodyControlsAccessor.boxElement);
-        });
-        let stopButton = document.createElement("button");
-        stopButton.innerHTML = "Pause";
-        stopButton.addEventListener("click", () => this.pause());
-        this.controlsElement.appendChild(stopButton);
-        let startButton = document.createElement("button");
-        startButton.innerHTML = "Start";
-        startButton.addEventListener("click", () => this.start());
-        this.controlsElement.appendChild(startButton);
-        let applyButton = document.createElement("button");
-        applyButton.innerHTML = "Apply";
-        applyButton.addEventListener("click", () => this.applyControlsValues());
-        this.controlsElement.appendChild(applyButton);
-        // let resetButton = document.createElement("button");
-        // resetButton.innerHTML = "Reset";
-        // resetButton.addEventListener("click", () => this.reset());
-        // this.controlsElement.appendChild(resetButton);
-        //
-        // let randomButton = document.createElement("button");
-        // randomButton.innerHTML = "Random";
-        // randomButton.addEventListener("click", () => this.setRandomValuesForBodies());
-        // this.controlsElement.appendChild(randomButton);
+        this.synchroniseBodiesAccessors();
+        this.renderer.reset();
     }
     applyControlsValues() {
         this.bodyControlsAccessors.forEach(accessor => accessor.apply());
@@ -442,7 +407,7 @@ class CelestialMechanicsController {
         this.simulator.bodies[2].position.x = 7.5e8;
         this.simulator.bodies[2].position.y = 4.5e8;
         this.simulator.bodies.forEach(body => {
-            body.mass = rand(1e30, 1e31);
+            body.mass = rand(1e35, 1e36);
             body.velocity.setAmount(rand(1e7, 1e8));
         });
         this.simulator.bodies[0].velocity.setDirection(rand(Math.PI, Math.PI * 1.5));
@@ -460,6 +425,49 @@ class CelestialMechanicsController {
     pause() {
         this.started = false;
     }
+    createBodies() {
+        for (let i = 0; i < 3; i++) {
+            this.simulator.bodies[i] = new Body_1.Body();
+            this.simulator.bodies[i].color = this.niceColors.shift() || "#000";
+        }
+        this.setInitialValuesForBodies();
+    }
+    createControls() {
+        this.simulator.bodies.forEach((body, i) => {
+            let bodyControlsAccessor = new BodyControlsAccessor_1.BodyControlsAccessor(body, `Тело  ${i + 1}`);
+            this.bodyControlsAccessors.push(bodyControlsAccessor);
+            this.controlsElement.appendChild(bodyControlsAccessor.boxElement);
+        });
+        let stopButton = document.createElement("button");
+        stopButton.innerHTML = "Pause";
+        stopButton.addEventListener("click", () => this.pause());
+        this.controlsElement.appendChild(stopButton);
+        let startButton = document.createElement("button");
+        startButton.innerHTML = "Start";
+        startButton.addEventListener("click", () => this.start());
+        this.controlsElement.appendChild(startButton);
+        let applyButton = document.createElement("button");
+        applyButton.innerHTML = "Apply";
+        applyButton.addEventListener("click", () => this.applyControlsValues());
+        this.controlsElement.appendChild(applyButton);
+        let resetButton = document.createElement("button");
+        resetButton.innerHTML = "Reset";
+        resetButton.addEventListener("click", () => {
+            this.setInitialValuesForBodies();
+            this.reset();
+        });
+        this.controlsElement.appendChild(resetButton);
+        // let randomButton = document.createElement("button");
+        // randomButton.innerHTML = "Random";
+        // randomButton.addEventListener("click", () => {
+        //     this.setRandomValuesForBodies();
+        //     this.reset();
+        // });
+        // this.controlsElement.appendChild(randomButton);
+    }
+    synchroniseBodiesAccessors() {
+        this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
+    }
     render() {
         this.renderer.render();
     }
@@ -473,7 +481,7 @@ class CelestialMechanicsController {
     }
     asynchronousRecursiveIntegration() {
         this.simulator.integrate(this.integrationStep);
-        this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
+        this.synchroniseBodiesAccessors();
         this.waitForIntegrationDelay().then(() => {
             if (this.started) {
                 this.asynchronousRecursiveIntegration();
@@ -581,7 +589,7 @@ class CelestialMechanicsRenderer {
         this.scale = 3e6;
         this.prevPositions = new Map;
         this.createLayers();
-        this.fillPrevPositions();
+        this.resetPrevPositions();
     }
     createLayers() {
         let trajectoriesCanvas = document.createElement("canvas");
@@ -595,7 +603,7 @@ class CelestialMechanicsRenderer {
         this.space.appendChild(bodiesCanvas);
         this.bodiesLayer = bodiesCanvas.getContext("2d");
     }
-    fillPrevPositions() {
+    resetPrevPositions() {
         this.modulator.bodies.forEach(body => {
             this.prevPositions.set(body, new Position_1.Position(body.position.x, body.position.y));
         });
@@ -627,7 +635,12 @@ class CelestialMechanicsRenderer {
             this.trajectoriesLayer.lineTo(newX, newY);
             this.trajectoriesLayer.stroke();
         });
-        this.fillPrevPositions();
+        this.resetPrevPositions();
+    }
+    reset() {
+        this.trajectoriesLayer.clearRect(0, 0, this.trajectoriesLayer.canvas.width, this.trajectoriesLayer.canvas.height);
+        this.resetPrevPositions();
+        this.render();
     }
 }
 exports.CelestialMechanicsRenderer = CelestialMechanicsRenderer;

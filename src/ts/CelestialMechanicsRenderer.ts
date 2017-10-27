@@ -13,7 +13,7 @@ export class CelestialMechanicsRenderer {
         public modulator: CelestialMechanicsSimulator
     ) {
         this.createLayers();
-        this.fillPrevPositions();
+        this.resetPrevPositions();
     }
 
     private createLayers () {
@@ -30,7 +30,7 @@ export class CelestialMechanicsRenderer {
         this.bodiesLayer = bodiesCanvas.getContext("2d");
     }
 
-    private fillPrevPositions () {
+    private resetPrevPositions () {
         this.modulator.bodies.forEach(body => {
             this.prevPositions.set(body, new Position(body.position.x, body.position.y));
         })
@@ -68,6 +68,12 @@ export class CelestialMechanicsRenderer {
             this.trajectoriesLayer.lineTo(newX, newY);
             this.trajectoriesLayer.stroke();
         });
-        this.fillPrevPositions();
+        this.resetPrevPositions();
+    }
+
+    reset() {
+        this.trajectoriesLayer.clearRect(0, 0, this.trajectoriesLayer.canvas.width, this.trajectoriesLayer.canvas.height);
+        this.resetPrevPositions();
+        this.render();
     }
 }
