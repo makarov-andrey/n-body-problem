@@ -38,6 +38,7 @@ export class CelestialMechanicsController {
 
     applyControlsValues () {
         this.bodyControlsAccessors.forEach(accessor => accessor.apply());
+        this.renderer.reset();
     }
 
     setInitialValuesForBodies () {

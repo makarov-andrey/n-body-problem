@@ -375,6 +375,7 @@ class CelestialMechanicsController {
     }
     applyControlsValues() {
         this.bodyControlsAccessors.forEach(accessor => accessor.apply());
+        this.renderer.reset();
     }
     setInitialValuesForBodies() {
         this.simulator.bodies.forEach(body => body.mass = 2.74002e35);
