@@ -3,9 +3,9 @@ const path = require('path');
 module.exports = {
     entry: './src/bootstrap.js',
     output: {
-        path: path.resolve(__dirname, 'docs/dist'),
+        path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
-        publicPath: 'docs/dist/'
+        publicPath: 'dist/'
     },
     resolve: {
         extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
