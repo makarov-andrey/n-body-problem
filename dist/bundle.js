@@ -821,7 +821,7 @@ exports = module.exports = __webpack_require__(15)(undefined);
 
 
 // module
-exports.push([module.i, "#space  {\n    position: relative;\n}\n#space canvas {\n    position: absolute;\n    top: 0;\n    left: 0;\n}\n\n.container {\n    margin: 0 auto;\n    max-width: 1020px;\n    display: flex;\n    justify-content: space-between;\n}\n.col {\n    width: 500px;\n}\n\n#controls label {\n    display: block;\n}\n#controls .body-controls-box {\n    margin-bottom: 20px;\n}", ""]);
+exports.push([module.i, "#space  {\n    border: 1px solid #ccc;\n    position: relative;\n}\n#space canvas {\n    position: absolute;\n    top: 0;\n    left: 0;\n}\n\n.container {\n    margin: 0 auto;\n    max-width: 1020px;\n    display: flex;\n    justify-content: space-between;\n}\n.col {\n    width: 500px;\n}\n\n#controls label {\n    display: block;\n}\n#controls .body-controls-box {\n    margin-bottom: 20px;\n}", ""]);
 
 // exports
 
