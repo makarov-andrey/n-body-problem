@@ -378,7 +378,7 @@ class CelestialMechanicsController {
         this.renderer.reset();
     }
     setInitialValuesForBodies() {
-        this.simulator.bodies.forEach(body => body.mass = 2.74002e35);
+        this.simulator.bodies.forEach(body => body.mass = 2.75002e35);
         let scale = 3e8;
         let offsetX = scale * 2;
         let offsetY = scale * 2;
@@ -458,13 +458,13 @@ class CelestialMechanicsController {
             this.reset();
         });
         this.controlsElement.appendChild(resetButton);
-        // let randomButton = document.createElement("button");
-        // randomButton.innerHTML = "Random";
-        // randomButton.addEventListener("click", () => {
-        //     this.setRandomValuesForBodies();
-        //     this.reset();
-        // });
-        // this.controlsElement.appendChild(randomButton);
+        let randomButton = document.createElement("button");
+        randomButton.innerHTML = "Random";
+        randomButton.addEventListener("click", () => {
+            this.setRandomValuesForBodies();
+            this.reset();
+        });
+        this.controlsElement.appendChild(randomButton);
     }
     synchroniseBodiesAccessors() {
         this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
