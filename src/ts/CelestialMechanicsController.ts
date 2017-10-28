@@ -4,11 +4,12 @@ import {Body} from "./models/Body";
 import {BodyControlsAccessor} from "./BodyControlsAccessor";
 
 export class CelestialMechanicsController {
-    public integrationStep: number = 30 / 1000;
+    public integrationStep: number = 1 / 10000;
     protected started = false;
+    protected bodyControlsAccessors: BodyControlsAccessor[] = [];
     protected simulator: CelestialMechanicsSimulator;
     protected renderer: CelestialMechanicsRenderer;
-    protected bodyControlsAccessors: BodyControlsAccessor[] = [];
+    protected previousIntegrationTimestamp: number;
 
     public niceColors = [
         "#900",
@@ -25,10 +26,10 @@ export class CelestialMechanicsController {
         public controlsElement: HTMLElement,
     ) {
         this.simulator = new CelestialMechanicsSimulator();
-        this.createBodies();
         this.renderer = new CelestialMechanicsRenderer(this.spaceElement, this.simulator);
+        this.createBodies();
         this.createControls();
-        this.render();
+        this.renderer.render();
     }
 
     reset () {
@@ -94,7 +95,7 @@ export class CelestialMechanicsController {
             return;
         }
         this.started = true;
-        this.asynchronousRecursiveIntegration();
+        this.previousIntegrationTimestamp = Date.now();
         this.asynchronousRecursiveRender();
     }
 
@@ -153,34 +154,21 @@ export class CelestialMechanicsController {
         this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
     }
 
-    private render () {
-        this.renderer.render();
-    }
-
     private asynchronousRecursiveRender() {
-        this.render();
-        this.waitForAnimationFrame().then(() => {
-            if (this.started) {
-                this.asynchronousRecursiveRender();
-            }
-        });
-    }
-
-    private asynchronousRecursiveIntegration() {
-        this.simulator.integrate(this.integrationStep);
+        if (!this.started) {
+            return;
+        }
+        let now = Date.now();
+        while (this.previousIntegrationTimestamp < now) {
+            this.simulator.integrate(this.integrationStep);
+            this.renderer.renderEfficiently();
+            this.previousIntegrationTimestamp += this.integrationStep * 1000;
+        }
         this.synchroniseBodiesAccessors();
-        this.waitForIntegrationDelay().then(() => {
-            if (this.started) {
-                this.asynchronousRecursiveIntegration();
-            }
-        });
+        this.waitForAnimationFrame().then(() => this.asynchronousRecursiveRender());
     }
 
     private waitForAnimationFrame () {
         return new Promise(resolve => requestAnimationFrame(resolve));
-    }
-
-    private waitForIntegrationDelay () {
-        return new Promise(resolve => setTimeout(resolve, this.integrationStep * 1000));
     }
 }

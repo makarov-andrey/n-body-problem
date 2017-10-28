@@ -1,8 +1,8 @@
-export class Physics {
+export abstract class Physics {
     /**
      * Гравитационная постоянная
      * 
      * @type {number}
      */
-    static G = 6.67408e-11;
+    static readonly G = 6.67408e-11;
 }

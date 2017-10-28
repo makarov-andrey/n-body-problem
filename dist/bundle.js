@@ -351,7 +351,7 @@ class CelestialMechanicsController {
     constructor(spaceElement, controlsElement) {
         this.spaceElement = spaceElement;
         this.controlsElement = controlsElement;
-        this.integrationStep = 30 / 1000;
+        this.integrationStep = 1 / 10000;
         this.started = false;
         this.bodyControlsAccessors = [];
         this.niceColors = [
@@ -364,10 +364,10 @@ class CelestialMechanicsController {
             "#999",
         ];
         this.simulator = new CelestialMechanicsSimulator_1.CelestialMechanicsSimulator();
-        this.createBodies();
         this.renderer = new CelestialMechanicsRenderer_1.CelestialMechanicsRenderer(this.spaceElement, this.simulator);
+        this.createBodies();
         this.createControls();
-        this.render();
+        this.renderer.render();
     }
     reset() {
         this.synchroniseBodiesAccessors();
@@ -420,7 +420,7 @@ class CelestialMechanicsController {
             return;
         }
         this.started = true;
-        this.asynchronousRecursiveIntegration();
+        this.previousIntegrationTimestamp = Date.now();
         this.asynchronousRecursiveRender();
     }
     pause() {
@@ -469,31 +469,21 @@ class CelestialMechanicsController {
     synchroniseBodiesAccessors() {
         this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
     }
-    render() {
-        this.renderer.render();
-    }
     asynchronousRecursiveRender() {
-        this.render();
-        this.waitForAnimationFrame().then(() => {
-            if (this.started) {
-                this.asynchronousRecursiveRender();
-            }
-        });
-    }
-    asynchronousRecursiveIntegration() {
-        this.simulator.integrate(this.integrationStep);
+        if (!this.started) {
+            return;
+        }
+        let now = Date.now();
+        while (this.previousIntegrationTimestamp < now) {
+            this.simulator.integrate(this.integrationStep);
+            this.renderer.renderEfficiently();
+            this.previousIntegrationTimestamp += this.integrationStep * 1000;
+        }
         this.synchroniseBodiesAccessors();
-        this.waitForIntegrationDelay().then(() => {
-            if (this.started) {
-                this.asynchronousRecursiveIntegration();
-            }
-        });
+        this.waitForAnimationFrame().then(() => this.asynchronousRecursiveRender());
     }
     waitForAnimationFrame() {
         return new Promise(resolve => requestAnimationFrame(resolve));
-    }
-    waitForIntegrationDelay() {
-        return new Promise(resolve => setTimeout(resolve, this.integrationStep * 1000));
     }
 }
 exports.CelestialMechanicsController = CelestialMechanicsController;
@@ -588,9 +578,9 @@ class CelestialMechanicsRenderer {
         this.space = space;
         this.modulator = modulator;
         this.scale = 3e6;
-        this.prevPositions = new Map;
+        this.previousPositions = new Map;
         this.createLayers();
-        this.resetPrevPositions();
+        this.resetDrawnPositions();
     }
     createLayers() {
         let trajectoriesCanvas = document.createElement("canvas");
@@ -604,14 +594,32 @@ class CelestialMechanicsRenderer {
         this.space.appendChild(bodiesCanvas);
         this.bodiesLayer = bodiesCanvas.getContext("2d");
     }
-    resetPrevPositions() {
+    resetDrawnPositions() {
         this.modulator.bodies.forEach(body => {
-            this.prevPositions.set(body, new Position_1.Position(body.position.x, body.position.y));
+            let prevPosition = this.previousPositions.get(body);
+            if (!prevPosition) {
+                prevPosition = new Position_1.Position();
+                this.previousPositions.set(body, prevPosition);
+            }
+            prevPosition.x = body.position.x;
+            prevPosition.y = body.position.y;
+        });
+    }
+    needRender() {
+        return this.modulator.bodies.some(body => {
+            let prevPosition = this.previousPositions.get(body);
+            return Math.round(prevPosition.x / this.scale) != Math.round(body.position.x / this.scale)
+                || Math.round(prevPosition.y / this.scale) != Math.round(body.position.y / this.scale);
         });
     }
     render() {
         this.renderTrajectories();
         this.renderBodies();
+    }
+    renderEfficiently() {
+        if (this.needRender()) {
+            this.render();
+        }
     }
     renderBodies() {
         this.bodiesLayer.clearRect(0, 0, this.bodiesLayer.canvas.width, this.bodiesLayer.canvas.height);
@@ -626,8 +634,13 @@ class CelestialMechanicsRenderer {
     }
     renderTrajectories() {
         this.modulator.bodies.forEach(body => {
-            let oldX = this.prevPositions.get(body).x / this.scale;
-            let oldY = this.prevPositions.get(body).y / this.scale;
+            let prevPosition = this.previousPositions.get(body);
+            if (!prevPosition) {
+                prevPosition = new Position_1.Position(body.position.x, body.position.y);
+                this.previousPositions.set(body, prevPosition);
+            }
+            let oldX = prevPosition.x / this.scale;
+            let oldY = prevPosition.y / this.scale;
             let newX = body.position.x / this.scale;
             let newY = body.position.y / this.scale;
             this.trajectoriesLayer.strokeStyle = body.color;
@@ -636,11 +649,11 @@ class CelestialMechanicsRenderer {
             this.trajectoriesLayer.lineTo(newX, newY);
             this.trajectoriesLayer.stroke();
         });
-        this.resetPrevPositions();
+        this.resetDrawnPositions();
     }
     reset() {
         this.trajectoriesLayer.clearRect(0, 0, this.trajectoriesLayer.canvas.width, this.trajectoriesLayer.canvas.height);
-        this.resetPrevPositions();
+        this.resetDrawnPositions();
         this.render();
     }
 }

@@ -4,7 +4,7 @@ import {Position} from "./models/Position";
 
 export class CelestialMechanicsRenderer {
     public scale: number = 3e6;
-    public prevPositions: Map<Body, Position> = new Map;
+    public previousPositions: Map<Body, Position> = new Map;
     protected trajectoriesLayer: CanvasRenderingContext2D;
     protected bodiesLayer: CanvasRenderingContext2D;
 
@@ -13,7 +13,7 @@ export class CelestialMechanicsRenderer {
         public modulator: CelestialMechanicsSimulator
     ) {
         this.createLayers();
-        this.resetPrevPositions();
+        this.resetDrawnPositions();
     }
 
     private createLayers () {
@@ -30,15 +30,35 @@ export class CelestialMechanicsRenderer {
         this.bodiesLayer = bodiesCanvas.getContext("2d");
     }
 
-    private resetPrevPositions () {
+    private resetDrawnPositions () {
         this.modulator.bodies.forEach(body => {
-            this.prevPositions.set(body, new Position(body.position.x, body.position.y));
+            let prevPosition = this.previousPositions.get(body);
+            if (!prevPosition) {
+                prevPosition = new Position();
+                this.previousPositions.set(body, prevPosition);
+            }
+            prevPosition.x = body.position.x;
+            prevPosition.y = body.position.y;
         })
+    }
+
+    private needRender () {
+        return this.modulator.bodies.some(body => {
+            let prevPosition = this.previousPositions.get(body);
+            return Math.round(prevPosition.x / this.scale) != Math.round(body.position.x / this.scale)
+                || Math.round(prevPosition.y / this.scale) != Math.round(body.position.y / this.scale);
+        });
     }
 
     render () {
         this.renderTrajectories();
         this.renderBodies();
+    }
+
+    renderEfficiently () {
+        if (this.needRender()) {
+            this.render();
+        }
     }
 
     private renderBodies () {
@@ -56,8 +76,13 @@ export class CelestialMechanicsRenderer {
 
     private renderTrajectories () {
         this.modulator.bodies.forEach(body => {
-            let oldX = this.prevPositions.get(body).x / this.scale;
-            let oldY = this.prevPositions.get(body).y / this.scale;
+            let prevPosition = this.previousPositions.get(body);
+            if (!prevPosition) {
+                prevPosition = new Position(body.position.x, body.position.y);
+                this.previousPositions.set(body, prevPosition);
+            }
+            let oldX = prevPosition.x / this.scale;
+            let oldY = prevPosition.y / this.scale;
 
             let newX = body.position.x / this.scale;
             let newY = body.position.y / this.scale;
@@ -68,12 +93,12 @@ export class CelestialMechanicsRenderer {
             this.trajectoriesLayer.lineTo(newX, newY);
             this.trajectoriesLayer.stroke();
         });
-        this.resetPrevPositions();
+        this.resetDrawnPositions();
     }
 
     reset() {
         this.trajectoriesLayer.clearRect(0, 0, this.trajectoriesLayer.canvas.width, this.trajectoriesLayer.canvas.height);
-        this.resetPrevPositions();
+        this.resetDrawnPositions();
         this.render();
     }
 }
