@@ -82,7 +82,7 @@ export class CelestialMechanicsController {
 
         this.simulator.bodies.forEach(body => {
             body.mass = rand(1e35, 1e36);
-            body.velocity.setAmount(rand(1e7, 1e8));
+            body.velocity.setModuloValue(rand(1e7, 1e8));
         });
 
         this.simulator.bodies[0].velocity.setDirection(rand(Math.PI, Math.PI * 1.5));

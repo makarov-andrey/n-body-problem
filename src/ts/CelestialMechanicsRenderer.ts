@@ -4,7 +4,7 @@ import {Position} from "./models/Position";
 
 export class CelestialMechanicsRenderer {
     public scale: number = 3e6;
-    public previousPositions: Map<Body, Position> = new Map;
+    public previousPositions: WeakMap<Body, Position> = new WeakMap;
     protected trajectoriesLayer: CanvasRenderingContext2D;
     protected bodiesLayer: CanvasRenderingContext2D;
 

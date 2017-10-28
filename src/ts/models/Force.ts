@@ -1,10 +1,10 @@
-import {RadiusVector} from "./RadiusVector";
+import {VectorValue} from "./VectorValue";
 import {Acceleration} from "./Acceleration";
 
 /**
  * Инстансы этого класса олицетворяют собой силы, которые можно приложить к телам для придания им ускорения
  */
-export class Force extends RadiusVector {
+export class Force extends VectorValue {
     /**
      * Выводит ускорение из силы на основе массы
      *
@@ -13,7 +13,7 @@ export class Force extends RadiusVector {
      */
     getAcceleration(mass: number) {
         let acceleration = new Acceleration(this.x, this.y);
-        acceleration.setAmount(this.getAmount() / mass);
+        acceleration.setModuloValue(this.getModuloValue() / mass);
         return acceleration;
     }
 }

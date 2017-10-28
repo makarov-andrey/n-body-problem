@@ -70,6 +70,17 @@ export class RadiusVector {
     }
 
     /**
+     * Устанавливает координаты вектора, не меняя значения
+     *
+     * @param {number} val - угол относительно оси абсцисс в радианах
+     */
+    setDirection (val: number) {
+        let amount = this.getDistance();
+        this.x = amount * Math.sin(val);
+        this.y = amount * Math.cos(val);
+    }
+
+    /**
      * Возвращает четверть, в которой лежит радиус-вектор, в соответствии с математическими стандартами
      *          ∧
      *          |
@@ -98,33 +109,6 @@ export class RadiusVector {
                 return 3;
             }
         }
-    }
-
-    /**
-     * @see this.getDistance
-     * @returns {number}
-     */
-    getAmount () {
-        return this.getDistance();
-    }
-
-    /**
-     * @see this.setDistance
-     * @param {number} val
-     */
-    setAmount (val: number) {
-        this.setDistance(val);
-    }
-
-    /**
-     * Устанавливает координаты вектора, не меняя значения
-     *
-     * @param {number} val - угол относительно оси абсцисс в радианах
-     */
-    setDirection (val: number) {
-        let amount = this.getAmount();
-        this.x = amount * Math.sin(val);
-        this.y = amount * Math.cos(val);
     }
 
     /**

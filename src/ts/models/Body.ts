@@ -57,7 +57,7 @@ export class Body {
     gravityForce(another: Body) {
         let result = new Force();
         let distance = this.position.getDistance(another.position);
-        result.setAmount(Physics.G * (this.mass * another.mass / Math.pow(distance, 2)));
+        result.setModuloValue(Physics.G * (this.mass * another.mass / Math.pow(distance, 2)));
         result.setDirection(this.position.getDirection(another.position));
         return result;
     }

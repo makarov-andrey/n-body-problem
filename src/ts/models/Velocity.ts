@@ -1,4 +1,4 @@
-import {RadiusVector} from "./RadiusVector";
+import {VectorValue} from "./VectorValue";
 import {Acceleration} from "./Acceleration";
 import {Position} from "./Position";
 
@@ -6,7 +6,7 @@ import {Position} from "./Position";
  * Инстансы этого класса представляют собой скорость объекта.
  * Т.е. подразумевается единожды дифференцированный по времени радиус-вектор.
  */
-export class Velocity extends RadiusVector {
+export class Velocity extends VectorValue {
     /**
      * Изменяет себя, добавив к себе интегрированное по времени ускорение (т.е. разницу в скоростях)
      *
@@ -25,7 +25,7 @@ export class Velocity extends RadiusVector {
      */
     integrate (time: number) {
         let position = new Position(this.x, this.y);
-        position.setAmount(this.getAmount() * time);
+        position.setDistance(this.getModuloValue() * time);
         return position;
     }
 }

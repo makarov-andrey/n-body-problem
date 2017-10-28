@@ -578,7 +578,7 @@ class CelestialMechanicsRenderer {
         this.space = space;
         this.modulator = modulator;
         this.scale = 3e6;
-        this.previousPositions = new Map;
+        this.previousPositions = new WeakMap;
         this.createLayers();
         this.resetDrawnPositions();
     }
