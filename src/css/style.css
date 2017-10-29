@@ -24,3 +24,8 @@
 #controls .body-controls-box {
     margin-bottom: 20px;
 }
+
+.warning {
+    margin-top: 10px;
+    color: #f00;
+}

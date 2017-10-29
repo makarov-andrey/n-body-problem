@@ -1,4 +1,5 @@
 import {Body} from "./models/Body";
+import * as utilities from "./Utilities";
 
 export class BodyControlsAccessor {
     public readonly boxElement: HTMLElement;
@@ -9,37 +10,31 @@ export class BodyControlsAccessor {
     private yPositionInput: HTMLInputElement;
 
     constructor (public body: Body, name: string) {
-        let createElementFromHtml = html => {
-            let template = document.createElement('template');
-            template.innerHTML = html;
-            return <HTMLElement> template.content.firstChild;
-        };
+        this.boxElement = utilities.createElementFromHtml(`<div class='body-controls-box'><span style="color: ${body.color}">${name}</span></div>`);
 
-        this.boxElement = createElementFromHtml(`<div class='body-controls-box'><span style="color: ${body.color}">${name}</span></div>`);
+        this.massInput = <HTMLInputElement> utilities.createElementFromHtml(`<input type="text"/>`);
+        this.xVelocityInput = <HTMLInputElement> utilities.createElementFromHtml(`<input type="text"/>`);
+        this.yVelocityInput = <HTMLInputElement> utilities.createElementFromHtml(`<input type="text"/>`);
+        this.xPositionInput = <HTMLInputElement> utilities.createElementFromHtml(`<input type="text"/>`);
+        this.yPositionInput = <HTMLInputElement> utilities.createElementFromHtml(`<input type="text"/>`);
 
-        this.massInput = <HTMLInputElement> createElementFromHtml(`<input type="text"/>`);
-        this.xVelocityInput = <HTMLInputElement> createElementFromHtml(`<input type="text"/>`);
-        this.yVelocityInput = <HTMLInputElement> createElementFromHtml(`<input type="text"/>`);
-        this.xPositionInput = <HTMLInputElement> createElementFromHtml(`<input type="text"/>`);
-        this.yPositionInput = <HTMLInputElement> createElementFromHtml(`<input type="text"/>`);
-
-        let massLabel = createElementFromHtml('<label>Масса (кг):</label>');
+        let massLabel = utilities.createElementFromHtml('<label>Масса (кг):</label>');
         massLabel.appendChild(this.massInput);
         this.boxElement.appendChild(massLabel);
 
-        let xVelocityLabel = createElementFromHtml('<label>Вектор скорости X (м/с):</label>');
+        let xVelocityLabel = utilities.createElementFromHtml('<label>Вектор скорости X (м/с):</label>');
         xVelocityLabel.appendChild(this.xVelocityInput);
         this.boxElement.appendChild(xVelocityLabel);
 
-        let yVelocityLabel = createElementFromHtml('<label>Вектор скорости Y (м/с):</label>');
+        let yVelocityLabel = utilities.createElementFromHtml('<label>Вектор скорости Y (м/с):</label>');
         yVelocityLabel.appendChild(this.yVelocityInput);
         this.boxElement.appendChild(yVelocityLabel);
 
-        let xPositionLabel = createElementFromHtml('<label>Позиция X (м):</label>');
+        let xPositionLabel = utilities.createElementFromHtml('<label>Позиция X (м):</label>');
         xPositionLabel.appendChild(this.xPositionInput);
         this.boxElement.appendChild(xPositionLabel);
 
-        let yPositionLabel = createElementFromHtml('<label>Позиция Y (м):</label>');
+        let yPositionLabel = utilities.createElementFromHtml('<label>Позиция Y (м):</label>');
         yPositionLabel.appendChild(this.yPositionInput);
         this.boxElement.appendChild(yPositionLabel);
     }

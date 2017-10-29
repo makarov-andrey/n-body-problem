@@ -60,11 +60,91 @@
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const RadiusVector_1 = __webpack_require__(3);
+class VectorValue extends RadiusVector_1.RadiusVector {
+    /**
+     * @see getDistance
+     * @returns {number}
+     */
+    getModuloValue() {
+        return this.getDistance();
+    }
+    /**
+     * @see setDistance
+     * @returns {number}
+     */
+    setModuloValue(val) {
+        this.setDistance(val);
+    }
+}
+exports.VectorValue = VectorValue;
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const RadiusVector_1 = __webpack_require__(3);
+/**
+ * Инстансы этого класса представляют собой позицию объекта относительно точки отсчета, т.е. радиус-вектор.
+ */
+class Position extends RadiusVector_1.RadiusVector {
+    /**
+     * Изменяет себя, добавив к себе интегрированную по времени скорость (т.е. разницу в позициях)
+     *
+     * @param {Velocity} velocity
+     * @param {number} time
+     */
+    move(velocity, time) {
+        this.add(velocity.integrate(time));
+    }
+}
+exports.Position = Position;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const VectorValue_1 = __webpack_require__(0);
+const Acceleration_1 = __webpack_require__(10);
+/**
+ * Инстансы этого класса олицетворяют собой силы, которые можно приложить к телам для придания им ускорения
+ */
+class Force extends VectorValue_1.VectorValue {
+    /**
+     * Выводит ускорение из силы на основе массы
+     *
+     * @param {number} mass
+     * @returns {Acceleration}
+     */
+    getAcceleration(mass) {
+        let acceleration = new Acceleration_1.Acceleration(this.x, this.y);
+        acceleration.setModuloValue(this.getModuloValue() / mass);
+        return acceleration;
+    }
+}
+exports.Force = Force;
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -139,6 +219,16 @@ class RadiusVector {
         }
     }
     /**
+     * Устанавливает координаты вектора, не меняя значения
+     *
+     * @param {number} val - угол относительно оси абсцисс в радианах
+     */
+    setDirection(val) {
+        let amount = this.getDistance();
+        this.x = amount * Math.sin(val);
+        this.y = amount * Math.cos(val);
+    }
+    /**
      * Возвращает четверть, в которой лежит радиус-вектор, в соответствии с математическими стандартами
      *          ∧
      *          |
@@ -172,30 +262,6 @@ class RadiusVector {
         }
     }
     /**
-     * @see this.getDistance
-     * @returns {number}
-     */
-    getAmount() {
-        return this.getDistance();
-    }
-    /**
-     * @see this.setDistance
-     * @param {number} val
-     */
-    setAmount(val) {
-        this.setDistance(val);
-    }
-    /**
-     * Устанавливает координаты вектора, не меняя значения
-     *
-     * @param {number} val - угол относительно оси абсцисс в радианах
-     */
-    setDirection(val) {
-        let amount = this.getAmount();
-        this.x = amount * Math.sin(val);
-        this.y = amount * Math.cos(val);
-    }
-    /**
      * Прибавляет вектор к текущему вектору
      *
      * @param {RadiusVector} another
@@ -218,72 +284,19 @@ exports.RadiusVector = RadiusVector;
 
 
 /***/ }),
-/* 1 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const RadiusVector_1 = __webpack_require__(0);
-/**
- * Инстансы этого класса представляют собой позицию объекта относительно точки отсчета, т.е. радиус-вектор.
- */
-class Position extends RadiusVector_1.RadiusVector {
-    /**
-     * Изменяет себя, добавив к себе интегрированную по времени скорость (т.е. разницу в позициях)
-     *
-     * @param {Velocity} velocity
-     * @param {number} time
-     */
-    move(velocity, time) {
-        this.add(velocity.integrate(time));
-    }
-}
-exports.Position = Position;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const RadiusVector_1 = __webpack_require__(0);
-const Acceleration_1 = __webpack_require__(8);
-/**
- * Инстансы этого класса олицетворяют собой силы, которые можно приложить к телам для придания им ускорения
- */
-class Force extends RadiusVector_1.RadiusVector {
-    /**
-     * Выводит ускорение из силы на основе массы
-     *
-     * @param {number} mass
-     * @returns {Acceleration}
-     */
-    getAcceleration(mass) {
-        let acceleration = new Acceleration_1.Acceleration(this.x, this.y);
-        acceleration.setAmount(this.getAmount() / mass);
-        return acceleration;
-    }
-}
-exports.Force = Force;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const RadiusVector_1 = __webpack_require__(0);
+const VectorValue_1 = __webpack_require__(0);
 const Position_1 = __webpack_require__(1);
 /**
  * Инстансы этого класса представляют собой скорость объекта.
  * Т.е. подразумевается единожды дифференцированный по времени радиус-вектор.
  */
-class Velocity extends RadiusVector_1.RadiusVector {
+class Velocity extends VectorValue_1.VectorValue {
     /**
      * Изменяет себя, добавив к себе интегрированное по времени ускорение (т.е. разницу в скоростях)
      *
@@ -301,25 +314,11 @@ class Velocity extends RadiusVector_1.RadiusVector {
      */
     integrate(time) {
         let position = new Position_1.Position(this.x, this.y);
-        position.setAmount(this.getAmount() * time);
+        position.setDistance(this.getModuloValue() * time);
         return position;
     }
 }
 exports.Velocity = Velocity;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ts_app_ts__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ts_app_ts___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ts_app_ts__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_style_css__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_style_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__css_style_css__);
-
-
 
 
 /***/ }),
@@ -329,7 +328,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const CelestialMechanicsController_1 = __webpack_require__(6);
+function createElementFromHtml(html) {
+    let template = document.createElement('template');
+    template.innerHTML = html.trim();
+    return template.content.firstChild;
+}
+exports.createElementFromHtml = createElementFromHtml;
+function rand(min, max) {
+    return Math.random() * (max - min) + min;
+}
+exports.rand = rand;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ts_app_ts__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ts_app_ts___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ts_app_ts__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_style_css__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__css_style_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__css_style_css__);
+
+
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const CelestialMechanicsController_1 = __webpack_require__(8);
 let space = document.getElementById("space");
 let controls = document.getElementById("controls");
 let controller = new CelestialMechanicsController_1.CelestialMechanicsController(space, controls);
@@ -337,23 +369,27 @@ controller.start();
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const CelestialMechanicsSimulator_1 = __webpack_require__(7);
-const CelestialMechanicsRenderer_1 = __webpack_require__(9);
-const Body_1 = __webpack_require__(10);
-const BodyControlsAccessor_1 = __webpack_require__(12);
+const CelestialMechanicsSimulator_1 = __webpack_require__(9);
+const CelestialMechanicsRenderer_1 = __webpack_require__(11);
+const Body_1 = __webpack_require__(12);
+const BodyControlsAccessor_1 = __webpack_require__(14);
+const utilities = __webpack_require__(5);
 class CelestialMechanicsController {
     constructor(spaceElement, controlsElement) {
         this.spaceElement = spaceElement;
         this.controlsElement = controlsElement;
-        this.integrationStep = 1 / 10000;
+        this.integrationStep = 1 / 100000;
         this.started = false;
         this.bodyControlsAccessors = [];
+        this.previousIntegrationTimestamp = Date.now();
+        this.timeScale = 1;
+        this.minFPS = 30;
         this.niceColors = [
             "#900",
             "#090",
@@ -370,7 +406,7 @@ class CelestialMechanicsController {
         this.renderer.render();
     }
     reset() {
-        this.synchroniseBodiesAccessors();
+        this.synchroniseControls();
         this.renderer.reset();
     }
     applyControlsValues() {
@@ -378,7 +414,7 @@ class CelestialMechanicsController {
         this.renderer.reset();
     }
     setInitialValuesForBodies() {
-        this.simulator.bodies.forEach(body => body.mass = 2.75002e35);
+        this.simulator.bodies.forEach(body => body.mass = 2e35);
         let scale = 3e8;
         let offsetX = scale * 2;
         let offsetY = scale * 2;
@@ -398,9 +434,6 @@ class CelestialMechanicsController {
         this.simulator.bodies[2].velocity.y = -2 * p2 * scale;
     }
     setRandomValuesForBodies() {
-        function rand(min, max) {
-            return Math.random() * (max - min) + min;
-        }
         this.simulator.bodies[0].position.x = 9e8;
         this.simulator.bodies[0].position.y = 8.1e8;
         this.simulator.bodies[1].position.x = 4.5e8;
@@ -408,12 +441,12 @@ class CelestialMechanicsController {
         this.simulator.bodies[2].position.x = 7.5e8;
         this.simulator.bodies[2].position.y = 4.5e8;
         this.simulator.bodies.forEach(body => {
-            body.mass = rand(1e35, 1e36);
-            body.velocity.setAmount(rand(1e7, 1e8));
+            body.mass = utilities.rand(1e35, 1e36);
+            body.velocity.setModuloValue(utilities.rand(1e7, 1e8));
         });
-        this.simulator.bodies[0].velocity.setDirection(rand(Math.PI, Math.PI * 1.5));
-        this.simulator.bodies[1].velocity.setDirection(rand(Math.PI * 1.5, Math.PI * 2));
-        this.simulator.bodies[2].velocity.setDirection(rand(Math.PI / 2, Math.PI));
+        this.simulator.bodies[0].velocity.setDirection(utilities.rand(Math.PI, Math.PI * 1.5));
+        this.simulator.bodies[1].velocity.setDirection(utilities.rand(Math.PI * 1.5, Math.PI * 2));
+        this.simulator.bodies[2].velocity.setDirection(utilities.rand(Math.PI / 2, Math.PI));
     }
     start() {
         if (this.started) {
@@ -439,47 +472,59 @@ class CelestialMechanicsController {
             this.bodyControlsAccessors.push(bodyControlsAccessor);
             this.controlsElement.appendChild(bodyControlsAccessor.boxElement);
         });
-        let stopButton = document.createElement("button");
-        stopButton.innerHTML = "Pause";
+        let stopButton = utilities.createElementFromHtml(`<button>Pause</button>`);
         stopButton.addEventListener("click", () => this.pause());
         this.controlsElement.appendChild(stopButton);
-        let startButton = document.createElement("button");
-        startButton.innerHTML = "Start";
+        let startButton = utilities.createElementFromHtml(`<button>Start</button>`);
         startButton.addEventListener("click", () => this.start());
         this.controlsElement.appendChild(startButton);
-        let applyButton = document.createElement("button");
-        applyButton.innerHTML = "Apply";
+        let applyButton = utilities.createElementFromHtml(`<button>Apply</button>`);
         applyButton.addEventListener("click", () => this.applyControlsValues());
         this.controlsElement.appendChild(applyButton);
-        let resetButton = document.createElement("button");
-        resetButton.innerHTML = "Reset";
+        let resetButton = utilities.createElementFromHtml(`<button>Reset</button>`);
         resetButton.addEventListener("click", () => {
             this.setInitialValuesForBodies();
             this.reset();
         });
         this.controlsElement.appendChild(resetButton);
-        let randomButton = document.createElement("button");
-        randomButton.innerHTML = "Random";
+        let randomButton = utilities.createElementFromHtml(`<button>Random</button>`);
         randomButton.addEventListener("click", () => {
             this.setRandomValuesForBodies();
             this.reset();
         });
         this.controlsElement.appendChild(randomButton);
+        let timeScaleWarning = utilities.createElementFromHtml(`
+            <div id="time-slowed-warning" class="warning" style="display: none;">
+                Время замедлено на <span id="time-slowed-value"></span>%
+            </div>
+        `);
+        this.controlsElement.appendChild(timeScaleWarning);
     }
-    synchroniseBodiesAccessors() {
+    synchroniseControls() {
         this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
+        if (this.timeScale < 1) {
+            document.getElementById('time-slowed-warning').style.display = 'block';
+            document.getElementById('time-slowed-value').innerHTML = Math.round((1 - this.timeScale) * 100).toString();
+        }
+        else {
+            document.getElementById('time-slowed-warning').style.display = 'none';
+        }
     }
     asynchronousRecursiveRender() {
         if (!this.started) {
             return;
         }
-        let now = Date.now();
+        let now = Date.now(), difference = now - this.previousIntegrationTimestamp, maxFrameRenderingTime = 1000 / this.minFPS;
+        this.timeScale *= maxFrameRenderingTime / difference;
+        if (this.timeScale > 1) {
+            this.timeScale = 1;
+        }
         while (this.previousIntegrationTimestamp < now) {
             this.simulator.integrate(this.integrationStep);
             this.renderer.renderEfficiently();
-            this.previousIntegrationTimestamp += this.integrationStep * 1000;
+            this.previousIntegrationTimestamp += this.integrationStep * 1000 / this.timeScale;
         }
-        this.synchroniseBodiesAccessors();
+        this.synchroniseControls();
         this.waitForAnimationFrame().then(() => this.asynchronousRecursiveRender());
     }
     waitForAnimationFrame() {
@@ -490,7 +535,7 @@ exports.CelestialMechanicsController = CelestialMechanicsController;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -537,19 +582,19 @@ exports.CelestialMechanicsSimulator = CelestialMechanicsSimulator;
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const RadiusVector_1 = __webpack_require__(0);
-const Velocity_1 = __webpack_require__(3);
+const VectorValue_1 = __webpack_require__(0);
+const Velocity_1 = __webpack_require__(4);
 /**
  * Инстансы этого класса представляют собой ускорение объекта.
  * Т.е. подразумевается дважды дифференцированный по времени радиус-вектор.
  */
-class Acceleration extends RadiusVector_1.RadiusVector {
+class Acceleration extends VectorValue_1.VectorValue {
     /**
      * Интегрирует по времени ускорение - возвращает объект Velocity, представляющий собой разницу скоростей
      *
@@ -558,7 +603,7 @@ class Acceleration extends RadiusVector_1.RadiusVector {
      */
     integrate(time) {
         let velocity = new Velocity_1.Velocity(this.x, this.y);
-        velocity.setAmount(this.getAmount() * time);
+        velocity.setModuloValue(this.getModuloValue() * time);
         return velocity;
     }
 }
@@ -566,7 +611,7 @@ exports.Acceleration = Acceleration;
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -661,15 +706,15 @@ exports.CelestialMechanicsRenderer = CelestialMechanicsRenderer;
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Physics_1 = __webpack_require__(11);
+const Physics_1 = __webpack_require__(13);
 const Position_1 = __webpack_require__(1);
-const Velocity_1 = __webpack_require__(3);
+const Velocity_1 = __webpack_require__(4);
 const Force_1 = __webpack_require__(2);
 /**
  * Физическое тело. Материальный объект, выраженный в виде материальной точки, имеющий массу, скорость и позицию
@@ -713,7 +758,7 @@ class Body {
     gravityForce(another) {
         let result = new Force_1.Force();
         let distance = this.position.getDistance(another.position);
-        result.setAmount(Physics_1.Physics.G * (this.mass * another.mass / Math.pow(distance, 2)));
+        result.setModuloValue(Physics_1.Physics.G * (this.mass * another.mass / Math.pow(distance, 2)));
         result.setDirection(this.position.getDirection(another.position));
         return result;
     }
@@ -722,7 +767,7 @@ exports.Body = Body;
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -740,39 +785,35 @@ exports.Physics = Physics;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const utilities = __webpack_require__(5);
 class BodyControlsAccessor {
     constructor(body, name) {
         this.body = body;
-        let createElementFromHtml = html => {
-            let template = document.createElement('template');
-            template.innerHTML = html;
-            return template.content.firstChild;
-        };
-        this.boxElement = createElementFromHtml(`<div class='body-controls-box'><span style="color: ${body.color}">${name}</span></div>`);
-        this.massInput = createElementFromHtml(`<input type="text"/>`);
-        this.xVelocityInput = createElementFromHtml(`<input type="text"/>`);
-        this.yVelocityInput = createElementFromHtml(`<input type="text"/>`);
-        this.xPositionInput = createElementFromHtml(`<input type="text"/>`);
-        this.yPositionInput = createElementFromHtml(`<input type="text"/>`);
-        let massLabel = createElementFromHtml('<label>Масса (кг):</label>');
+        this.boxElement = utilities.createElementFromHtml(`<div class='body-controls-box'><span style="color: ${body.color}">${name}</span></div>`);
+        this.massInput = utilities.createElementFromHtml(`<input type="text"/>`);
+        this.xVelocityInput = utilities.createElementFromHtml(`<input type="text"/>`);
+        this.yVelocityInput = utilities.createElementFromHtml(`<input type="text"/>`);
+        this.xPositionInput = utilities.createElementFromHtml(`<input type="text"/>`);
+        this.yPositionInput = utilities.createElementFromHtml(`<input type="text"/>`);
+        let massLabel = utilities.createElementFromHtml('<label>Масса (кг):</label>');
         massLabel.appendChild(this.massInput);
         this.boxElement.appendChild(massLabel);
-        let xVelocityLabel = createElementFromHtml('<label>Вектор скорости X (м/с):</label>');
+        let xVelocityLabel = utilities.createElementFromHtml('<label>Вектор скорости X (м/с):</label>');
         xVelocityLabel.appendChild(this.xVelocityInput);
         this.boxElement.appendChild(xVelocityLabel);
-        let yVelocityLabel = createElementFromHtml('<label>Вектор скорости Y (м/с):</label>');
+        let yVelocityLabel = utilities.createElementFromHtml('<label>Вектор скорости Y (м/с):</label>');
         yVelocityLabel.appendChild(this.yVelocityInput);
         this.boxElement.appendChild(yVelocityLabel);
-        let xPositionLabel = createElementFromHtml('<label>Позиция X (м):</label>');
+        let xPositionLabel = utilities.createElementFromHtml('<label>Позиция X (м):</label>');
         xPositionLabel.appendChild(this.xPositionInput);
         this.boxElement.appendChild(xPositionLabel);
-        let yPositionLabel = createElementFromHtml('<label>Позиция Y (м):</label>');
+        let yPositionLabel = utilities.createElementFromHtml('<label>Позиция Y (м):</label>');
         yPositionLabel.appendChild(this.yPositionInput);
         this.boxElement.appendChild(yPositionLabel);
     }
@@ -795,13 +836,13 @@ exports.BodyControlsAccessor = BodyControlsAccessor;
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(14);
+var content = __webpack_require__(16);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -809,7 +850,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(16)(content, options);
+var update = __webpack_require__(18)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -826,21 +867,21 @@ if(false) {
 }
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(15)(undefined);
+exports = module.exports = __webpack_require__(17)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "#space  {\n    border: 1px solid #ccc;\n    position: relative;\n}\n#space canvas {\n    position: absolute;\n    top: 0;\n    left: 0;\n}\n\n.container {\n    margin: 0 auto;\n    max-width: 1020px;\n    display: flex;\n    justify-content: space-between;\n}\n.col {\n    width: 500px;\n}\n\n#controls label {\n    display: block;\n}\n#controls .body-controls-box {\n    margin-bottom: 20px;\n}", ""]);
+exports.push([module.i, "#space  {\n    border: 1px solid #ccc;\n    position: relative;\n}\n#space canvas {\n    position: absolute;\n    top: 0;\n    left: 0;\n}\n\n.container {\n    margin: 0 auto;\n    max-width: 1020px;\n    display: flex;\n    justify-content: space-between;\n}\n.col {\n    width: 500px;\n}\n\n#controls label {\n    display: block;\n}\n#controls .body-controls-box {\n    margin-bottom: 20px;\n}\n\n.warning {\n    margin-top: 10px;\n    color: #f00;\n}", ""]);
 
 // exports
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports) {
 
 /*
@@ -922,7 +963,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -978,7 +1019,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(17);
+var	fixUrls = __webpack_require__(19);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -1294,7 +1335,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports) {
 
 
