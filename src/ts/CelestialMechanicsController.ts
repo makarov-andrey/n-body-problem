@@ -7,7 +7,7 @@ import * as utilities from "./Utilities";
 export class CelestialMechanicsController {
     public integrationStep: number = 1 / 100000;
     public minFPS: number = 30;
-    public timeScale: number = 3;
+    public timeScale: number = 1;
     public niceColors = [
         "#900",
         "#090",
