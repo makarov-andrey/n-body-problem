@@ -385,11 +385,8 @@ class CelestialMechanicsController {
         this.spaceElement = spaceElement;
         this.controlsElement = controlsElement;
         this.integrationStep = 1 / 100000;
-        this.started = false;
-        this.bodyControlsAccessors = [];
-        this.previousIntegrationTimestamp = Date.now();
-        this.timeScale = 1;
         this.minFPS = 30;
+        this.timeScale = 3;
         this.niceColors = [
             "#900",
             "#090",
@@ -399,6 +396,10 @@ class CelestialMechanicsController {
             "#099",
             "#999",
         ];
+        this.started = false;
+        this.bodyControlsAccessors = [];
+        this.previousIntegrationTimestamp = Date.now();
+        this.realTimeScale = this.timeScale;
         this.simulator = new CelestialMechanicsSimulator_1.CelestialMechanicsSimulator();
         this.renderer = new CelestialMechanicsRenderer_1.CelestialMechanicsRenderer(this.spaceElement, this.simulator);
         this.createBodies();
@@ -502,9 +503,9 @@ class CelestialMechanicsController {
     }
     synchroniseControls() {
         this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
-        if (this.timeScale < 1) {
+        if (this.realTimeScale < this.timeScale) {
             document.getElementById('time-slowed-warning').style.display = 'block';
-            document.getElementById('time-slowed-value').innerHTML = Math.round((1 - this.timeScale) * 100).toString();
+            document.getElementById('time-slowed-value').innerHTML = Math.round((this.timeScale - this.realTimeScale) * 100).toString();
         }
         else {
             document.getElementById('time-slowed-warning').style.display = 'none';
@@ -515,14 +516,14 @@ class CelestialMechanicsController {
             return;
         }
         let now = Date.now(), difference = now - this.previousIntegrationTimestamp, maxFrameRenderingTime = 1000 / this.minFPS;
-        this.timeScale *= maxFrameRenderingTime / difference;
-        if (this.timeScale > 1) {
-            this.timeScale = 1;
+        this.realTimeScale *= maxFrameRenderingTime / difference;
+        if (this.realTimeScale > this.timeScale) {
+            this.realTimeScale = this.timeScale;
         }
         while (this.previousIntegrationTimestamp < now) {
             this.simulator.integrate(this.integrationStep);
             this.renderer.renderEfficiently();
-            this.previousIntegrationTimestamp += this.integrationStep * 1000 / this.timeScale;
+            this.previousIntegrationTimestamp += this.integrationStep * 1000 / this.realTimeScale;
         }
         this.synchroniseControls();
         this.waitForAnimationFrame().then(() => this.asynchronousRecursiveRender());
@@ -650,7 +651,7 @@ class CelestialMechanicsRenderer {
             prevPosition.y = body.position.y;
         });
     }
-    needRender() {
+    needRendering() {
         return this.modulator.bodies.some(body => {
             let prevPosition = this.previousPositions.get(body);
             return Math.round(prevPosition.x / this.scale) != Math.round(body.position.x / this.scale)
@@ -662,15 +663,15 @@ class CelestialMechanicsRenderer {
         this.renderBodies();
     }
     renderEfficiently() {
-        if (this.needRender()) {
+        if (this.needRendering()) {
             this.render();
         }
     }
     renderBodies() {
         this.bodiesLayer.clearRect(0, 0, this.bodiesLayer.canvas.width, this.bodiesLayer.canvas.height);
         this.modulator.bodies.forEach(body => {
-            let x = body.position.x / this.scale;
-            let y = body.position.y / this.scale;
+            let x = Math.round(body.position.x / this.scale * 10) / 10;
+            let y = Math.round(body.position.y / this.scale * 10) / 10;
             this.bodiesLayer.fillStyle = body.color;
             this.bodiesLayer.beginPath();
             this.bodiesLayer.arc(x, y, 3, 0, 2 * Math.PI);
@@ -684,10 +685,10 @@ class CelestialMechanicsRenderer {
                 prevPosition = new Position_1.Position(body.position.x, body.position.y);
                 this.previousPositions.set(body, prevPosition);
             }
-            let oldX = prevPosition.x / this.scale;
-            let oldY = prevPosition.y / this.scale;
-            let newX = body.position.x / this.scale;
-            let newY = body.position.y / this.scale;
+            let oldX = Math.round(prevPosition.x / this.scale * 10) / 10;
+            let oldY = Math.round(prevPosition.y / this.scale * 10) / 10;
+            let newX = Math.round(body.position.x / this.scale * 10) / 10;
+            let newY = Math.round(body.position.y / this.scale * 10) / 10;
             this.trajectoriesLayer.strokeStyle = body.color;
             this.trajectoriesLayer.beginPath();
             this.trajectoriesLayer.moveTo(oldX, oldY);

@@ -42,7 +42,7 @@ export class CelestialMechanicsRenderer {
         })
     }
 
-    private needRender () {
+    private needRendering () {
         return this.modulator.bodies.some(body => {
             let prevPosition = this.previousPositions.get(body);
             return Math.round(prevPosition.x / this.scale) != Math.round(body.position.x / this.scale)
@@ -56,7 +56,7 @@ export class CelestialMechanicsRenderer {
     }
 
     renderEfficiently () {
-        if (this.needRender()) {
+        if (this.needRendering()) {
             this.render();
         }
     }
@@ -64,8 +64,8 @@ export class CelestialMechanicsRenderer {
     private renderBodies () {
         this.bodiesLayer.clearRect(0, 0, this.bodiesLayer.canvas.width, this.bodiesLayer.canvas.height);
         this.modulator.bodies.forEach(body => {
-            let x = body.position.x / this.scale;
-            let y = body.position.y / this.scale;
+            let x = Math.round(body.position.x / this.scale * 10) / 10;
+            let y = Math.round(body.position.y / this.scale * 10) / 10;
 
             this.bodiesLayer.fillStyle = body.color;
             this.bodiesLayer.beginPath();
@@ -81,11 +81,11 @@ export class CelestialMechanicsRenderer {
                 prevPosition = new Position(body.position.x, body.position.y);
                 this.previousPositions.set(body, prevPosition);
             }
-            let oldX = prevPosition.x / this.scale;
-            let oldY = prevPosition.y / this.scale;
+            let oldX = Math.round(prevPosition.x / this.scale * 10) / 10;
+            let oldY = Math.round(prevPosition.y / this.scale * 10) / 10;
 
-            let newX = body.position.x / this.scale;
-            let newY = body.position.y / this.scale;
+            let newX = Math.round(body.position.x / this.scale * 10) / 10;
+            let newY = Math.round(body.position.y / this.scale * 10) / 10;
 
             this.trajectoriesLayer.strokeStyle = body.color;
             this.trajectoriesLayer.beginPath();

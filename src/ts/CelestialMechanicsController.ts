@@ -6,14 +6,8 @@ import * as utilities from "./Utilities";
 
 export class CelestialMechanicsController {
     public integrationStep: number = 1 / 100000;
-    public readonly simulator: CelestialMechanicsSimulator;
-    public readonly renderer: CelestialMechanicsRenderer;
-    private started = false;
-    private bodyControlsAccessors: BodyControlsAccessor[] = [];
-    private previousIntegrationTimestamp: number = Date.now();
-    private timeScale: number = 1;
     public minFPS: number = 30;
-
+    public timeScale: number = 3;
     public niceColors = [
         "#900",
         "#090",
@@ -24,10 +18,19 @@ export class CelestialMechanicsController {
         "#999",
     ];
 
+    public readonly simulator: CelestialMechanicsSimulator;
+    public readonly renderer: CelestialMechanicsRenderer;
+
+    private started = false;
+    private bodyControlsAccessors: BodyControlsAccessor[] = [];
+    private previousIntegrationTimestamp: number = Date.now();
+    private realTimeScale: number;
+
     constructor (
         public spaceElement: HTMLElement,
         public controlsElement: HTMLElement,
     ) {
+        this.realTimeScale = this.timeScale;
         this.simulator = new CelestialMechanicsSimulator();
         this.renderer = new CelestialMechanicsRenderer(this.spaceElement, this.simulator);
         this.createBodies();
@@ -153,9 +156,9 @@ export class CelestialMechanicsController {
 
     private synchroniseControls( ) {
         this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
-        if (this.timeScale < 1) {
+        if (this.realTimeScale < this.timeScale) {
             document.getElementById('time-slowed-warning').style.display = 'block';
-            document.getElementById('time-slowed-value').innerHTML = Math.round((1 - this.timeScale) * 100).toString();
+            document.getElementById('time-slowed-value').innerHTML = Math.round((this.timeScale - this.realTimeScale) * 100).toString();
         } else {
             document.getElementById('time-slowed-warning').style.display = 'none';
         }
@@ -169,15 +172,15 @@ export class CelestialMechanicsController {
             difference = now - this.previousIntegrationTimestamp,
             maxFrameRenderingTime = 1000 / this.minFPS;
 
-        this.timeScale *= maxFrameRenderingTime / difference;
-        if (this.timeScale > 1) {
-            this.timeScale = 1;
+        this.realTimeScale *= maxFrameRenderingTime / difference;
+        if (this.realTimeScale > this.timeScale) {
+            this.realTimeScale = this.timeScale;
         }
 
         while (this.previousIntegrationTimestamp < now) {
             this.simulator.integrate(this.integrationStep);
             this.renderer.renderEfficiently();
-            this.previousIntegrationTimestamp += this.integrationStep * 1000 / this.timeScale;
+            this.previousIntegrationTimestamp += this.integrationStep * 1000 / this.realTimeScale;
         }
 
         this.synchroniseControls();
