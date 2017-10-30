@@ -158,7 +158,7 @@ export class CelestialMechanicsController {
         this.bodyControlsAccessors.forEach(accessor => accessor.synchronise());
         if (this.realTimeScale < this.timeScale) {
             document.getElementById('time-slowed-warning').style.display = 'block';
-            document.getElementById('time-slowed-value').innerHTML = Math.round((this.timeScale - this.realTimeScale) * 100).toString();
+            document.getElementById('time-slowed-value').innerHTML = Math.round((this.timeScale - this.realTimeScale) / this.timeScale * 100).toString();
         } else {
             document.getElementById('time-slowed-warning').style.display = 'none';
         }
