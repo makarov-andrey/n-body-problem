@@ -72,6 +72,28 @@ export class CelestialMechanicsController {
         this.simulator.bodies[2].velocity.y = -2 * p2 * scale;
     }
 
+    solarSystemModulation () {
+        let sun = this.simulator.bodies[0];
+        let earth = this.simulator.bodies[1];
+
+        sun.mass = 1.98892e30;
+        sun.position.x = 3e11;
+        sun.position.y = 3e11;
+        sun.velocity.x = 0;
+        sun.velocity.y = 0;
+
+        earth.mass = 5.9726e24;
+        earth.position.x = sun.position.x + 149597870700;
+        earth.position.y = sun.position.y;
+        earth.velocity.y = 0;
+        earth.velocity.x = 30000;
+
+
+        this.integrationStep = 5;
+        this.timeScale = 525600;
+        this.renderer.scale = 1.5e9;
+    }
+
     setRandomValuesForBodies () {
         this.simulator.bodies[0].position.x = 9e8;
         this.simulator.bodies[0].position.y = 8.1e8;

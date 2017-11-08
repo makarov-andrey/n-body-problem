@@ -99,7 +99,7 @@ exports.VectorValue = VectorValue;
 Object.defineProperty(exports, "__esModule", { value: true });
 const RadiusVector_1 = __webpack_require__(3);
 /**
- * Инстансы этого класса представляют собой позицию объекта относительно точки отсчета, т.е. радиус-вектор.
+ * Инстанс этого класса представляет собой позицию объекта относительно точки отсчета, т.е. радиус-вектор.
  */
 class Position extends RadiusVector_1.RadiusVector {
     /**
@@ -125,7 +125,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const VectorValue_1 = __webpack_require__(0);
 const Acceleration_1 = __webpack_require__(10);
 /**
- * Инстансы этого класса олицетворяют собой силы, которые можно приложить к телам для придания им ускорения
+ * Инстанс этого класса олицетворяет собой силу, которую можно приложить к телу для придания ему ускорения
  */
 class Force extends VectorValue_1.VectorValue {
     /**
@@ -293,7 +293,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const VectorValue_1 = __webpack_require__(0);
 const Position_1 = __webpack_require__(1);
 /**
- * Инстансы этого класса представляют собой скорость объекта.
+ * Инстанс этого класса представляет собой скорость объекта.
  * Т.е. подразумевается единожды дифференцированный по времени радиус-вектор.
  */
 class Velocity extends VectorValue_1.VectorValue {
@@ -433,6 +433,23 @@ class CelestialMechanicsController {
         this.simulator.bodies[2].position.y = offsetY;
         this.simulator.bodies[2].velocity.x = -2 * p1 * scale;
         this.simulator.bodies[2].velocity.y = -2 * p2 * scale;
+    }
+    solarSystemModulation() {
+        let sun = this.simulator.bodies[0];
+        let earth = this.simulator.bodies[1];
+        sun.mass = 1.98892e30;
+        sun.position.x = 3e11;
+        sun.position.y = 3e11;
+        sun.velocity.x = 0;
+        sun.velocity.y = 0;
+        earth.mass = 5.9726e24;
+        earth.position.x = sun.position.x + 149597870700;
+        earth.position.y = sun.position.y;
+        earth.velocity.y = 0;
+        earth.velocity.x = 30000;
+        this.integrationStep = 5;
+        this.timeScale = 525600;
+        this.renderer.scale = 1.5e9;
     }
     setRandomValuesForBodies() {
         this.simulator.bodies[0].position.x = 9e8;
@@ -592,7 +609,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const VectorValue_1 = __webpack_require__(0);
 const Velocity_1 = __webpack_require__(4);
 /**
- * Инстансы этого класса представляют собой ускорение объекта.
+ * Инстанс этого класса представляет собой ускорение объекта.
  * Т.е. подразумевается дважды дифференцированный по времени радиус-вектор.
  */
 class Acceleration extends VectorValue_1.VectorValue {
