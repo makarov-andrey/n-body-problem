@@ -8,6 +8,7 @@ export class CelestialMechanicsController {
     public integrationStep: number = 1 / 100000;
     public minFPS: number = 30;
     public timeScale: number = 1;
+    public defaultColor = "#000";
     public niceColors = [
         "#900",
         "#090",
@@ -33,7 +34,7 @@ export class CelestialMechanicsController {
         this.realTimeScale = this.timeScale;
         this.simulator = new CelestialMechanicsSimulator();
         this.renderer = new CelestialMechanicsRenderer(this.spaceElement, this.simulator);
-        this.createBodies();
+        this.setInitialValuesForBodies();
         this.createControls();
         this.renderer.render();
     }
@@ -48,7 +49,17 @@ export class CelestialMechanicsController {
         this.renderer.reset();
     }
 
+    resetControllerSettings () {
+        this.integrationStep = 1 / 10000;
+        this.timeScale = 1;
+        this.renderer.scale = 3e6;
+        this.previousIntegrationTimestamp = Date.now();
+        this.realTimeScale = this.timeScale;
+    }
+
     setInitialValuesForBodies () {
+        this.resetControllerSettings();
+        this.setBodiesAmount(3);
         this.simulator.bodies.forEach(body => body.mass = 2e35);
         let scale = 3e8;
         let offsetX = scale * 2;
@@ -73,6 +84,13 @@ export class CelestialMechanicsController {
     }
 
     solarSystemModulation () {
+        this.integrationStep = 5;
+        this.timeScale = 525600;
+        this.renderer.scale = 1.5e9;
+        this.previousIntegrationTimestamp = Date.now();
+        this.realTimeScale = this.timeScale;
+
+        this.setBodiesAmount(2);
         let sun = this.simulator.bodies[0];
         let earth = this.simulator.bodies[1];
 
@@ -87,14 +105,11 @@ export class CelestialMechanicsController {
         earth.position.y = sun.position.y;
         earth.velocity.y = 0;
         earth.velocity.x = 30000;
-
-
-        this.integrationStep = 5;
-        this.timeScale = 525600;
-        this.renderer.scale = 1.5e9;
     }
 
     setRandomValuesForBodies () {
+        this.resetControllerSettings();
+        this.setBodiesAmount(3);
         this.simulator.bodies[0].position.x = 9e8;
         this.simulator.bodies[0].position.y = 8.1e8;
 
@@ -127,12 +142,22 @@ export class CelestialMechanicsController {
         this.started = false;
     }
 
-    private createBodies () {
-        for (let i = 0; i < 3; i++) {
-            this.simulator.bodies[i] = new Body();
-            this.simulator.bodies[i].color = this.niceColors.shift() || "#000";
+    private setBodiesAmount (amount: number) {
+        let length = this.simulator.bodies.length;
+
+        while (amount < length) {
+            let body = this.simulator.bodies.pop();
+            if (body.color != this.defaultColor) {
+                this.niceColors.unshift(body.color);
+            }
+            length--;
         }
-        this.setInitialValuesForBodies();
+        while (amount > length) {
+            let body = new Body();
+            body.color = this.niceColors.shift() || this.defaultColor;
+            this.simulator.bodies.push(body);
+            length++;
+        }
     }
 
     private createControls () {
@@ -167,6 +192,13 @@ export class CelestialMechanicsController {
             this.reset();
         });
         this.controlsElement.appendChild(randomButton);
+
+        let earthSunButton = utilities.createElementFromHtml(`<button>Earth-Sun</button>`);
+        earthSunButton.addEventListener("click", () => {
+            this.solarSystemModulation();
+            this.reset();
+        });
+        this.controlsElement.appendChild(earthSunButton);
 
         let timeScaleWarning = utilities.createElementFromHtml(`
             <div id="time-slowed-warning" class="warning" style="display: none;">
