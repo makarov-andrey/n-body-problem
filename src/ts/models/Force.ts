@@ -2,7 +2,7 @@ import {VectorValue} from "./VectorValue";
 import {Acceleration} from "./Acceleration";
 
 /**
- * Инстансы этого класса олицетворяют собой силы, которые можно приложить к телам для придания им ускорения
+ * Инстанс этого класса олицетворяет собой силу, которую можно приложить к телу для придания ему ускорения
  */
 export class Force extends VectorValue {
     /**

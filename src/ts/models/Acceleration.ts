@@ -2,7 +2,7 @@ import {VectorValue} from "./VectorValue";
 import {Velocity} from "./Velocity";
 
 /**
- * Инстансы этого класса представляют собой ускорение объекта.
+ * Инстанс этого класса представляет собой ускорение объекта.
  * Т.е. подразумевается дважды дифференцированный по времени радиус-вектор.
  */
 export class Acceleration extends VectorValue {

@@ -2,7 +2,7 @@ import {RadiusVector} from "./RadiusVector";
 import {Velocity} from "./Velocity";
 
 /**
- * Инстансы этого класса представляют собой позицию объекта относительно точки отсчета, т.е. радиус-вектор.
+ * Инстанс этого класса представляет собой позицию объекта относительно точки отсчета, т.е. радиус-вектор.
  */
 export class Position extends RadiusVector {
     /**

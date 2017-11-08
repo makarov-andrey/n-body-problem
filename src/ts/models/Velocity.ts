@@ -3,7 +3,7 @@ import {Acceleration} from "./Acceleration";
 import {Position} from "./Position";
 
 /**
- * Инстансы этого класса представляют собой скорость объекта.
+ * Инстанс этого класса представляет собой скорость объекта.
  * Т.е. подразумевается единожды дифференцированный по времени радиус-вектор.
  */
 export class Velocity extends VectorValue {
