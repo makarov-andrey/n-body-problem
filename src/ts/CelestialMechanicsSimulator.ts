@@ -11,12 +11,12 @@ export class CelestialMechanicsSimulator {
      * @param {number} time
      */
     integrate(time: number) {
-        let gravityForcesForBodies: Map<Body, Force> = new Map();
+        let netGravityForcesForBodies: Map<Body, Force> = new Map();
         this.bodies.forEach(body => {
-            gravityForcesForBodies.set(body, this.netGravityForceFor(body));
+            netGravityForcesForBodies.set(body, this.netGravityForceFor(body));
         });
         this.bodies.forEach(body => {
-            body.exert(gravityForcesForBodies.get(body), time);
+            body.exert(netGravityForcesForBodies.get(body), time);
             body.move(time);
         });
     }

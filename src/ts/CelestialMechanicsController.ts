@@ -191,10 +191,10 @@ export class CelestialMechanicsController {
             return;
         }
         let now = Date.now(),
-            difference = now - this.previousIntegrationTimestamp,
+            frameRenderingTime = now - this.previousIntegrationTimestamp,
             maxFrameRenderingTime = 1000 / this.minFPS;
 
-        this.realTimeScale *= maxFrameRenderingTime / difference;
+        this.realTimeScale *= maxFrameRenderingTime / frameRenderingTime;
         if (this.realTimeScale > this.timeScale) {
             this.realTimeScale = this.timeScale;
         }

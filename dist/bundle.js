@@ -532,8 +532,8 @@ class CelestialMechanicsController {
         if (!this.started) {
             return;
         }
-        let now = Date.now(), difference = now - this.previousIntegrationTimestamp, maxFrameRenderingTime = 1000 / this.minFPS;
-        this.realTimeScale *= maxFrameRenderingTime / difference;
+        let now = Date.now(), frameRenderingTime = now - this.previousIntegrationTimestamp, maxFrameRenderingTime = 1000 / this.minFPS;
+        this.realTimeScale *= maxFrameRenderingTime / frameRenderingTime;
         if (this.realTimeScale > this.timeScale) {
             this.realTimeScale = this.timeScale;
         }
@@ -571,12 +571,12 @@ class CelestialMechanicsSimulator {
      * @param {number} time
      */
     integrate(time) {
-        let gravityForcesForBodies = new Map();
+        let netGravityForcesForBodies = new Map();
         this.bodies.forEach(body => {
-            gravityForcesForBodies.set(body, this.netGravityForceFor(body));
+            netGravityForcesForBodies.set(body, this.netGravityForceFor(body));
         });
         this.bodies.forEach(body => {
-            body.exert(gravityForcesForBodies.get(body), time);
+            body.exert(netGravityForcesForBodies.get(body), time);
             body.move(time);
         });
     }
